@@ -1,10 +1,59 @@
 #!/usr/bin/env node
 
-var Blynk = require("../");
+var net = require('net');
+var Blynk = require('blynk-library');
+var blynk = new Blynk.Blynk('4905434f280341a7ac1a3818060f6704', options = { connector: new Blynk.TcpClient( { addr: 'localhost'} ) });
 
-if (!process.argv[2]) {
-  console.log("Please specify auth token.");
-  process.exit(1);
-}
+var devices = {};
+devices.garage = { address: null, last: null, pins: { 'openState': null }};
 
-var blynk = new Blynk.Blynk(process.argv[2], options = { connector: new Blynk.TcpClient( { addr: 'localhost'} ) });
+// Listening Server
+var registrationString = /DEVICE: (.*) - (.*)/;
+var messageString = /MESSAGE: (.*) - (.*)/;
+var server = net.createServer(function(socket) {
+  var body = [];
+  socket.on('data', function(data) {
+    body.push(data);
+  }).on('end', function(){
+    body = Buffer.concat(body).toString();
+
+    // Device registrations
+    var deviceData = registrationString.exec(body);
+    if (deviceData !== null) {
+      console.log("Device", deviceData[1], "registered from", deviceData[2]);
+      devices[deviceData[1]].address = deviceData[2];
+      devices[deviceData[1]].last = Date.now();
+    }
+
+    // Pin writes
+    deviceData = messageString.exec(body);
+    if (deviceData !== null) {
+      if (devices[deviceData[1]].onMessage !== null)
+	devices[deviceData[1]].onMessage(deviceData[2], socket);
+    }
+  });
+}).listen(5000);
+
+// Garage Door
+var v0 = new blynk.VirtualPin(0);
+v0.on('write', function(param) {
+  if (param[0] == 1) {
+    var client = new net.Socket();
+    client.on('data', function(data){
+      client.destroy();
+      console.log("Triggered garage door");
+    });
+    client.connect(80, devices.garage.address, function() {
+      client.write('DOOR');
+    });
+  }
+});
+
+var v1 = new blynk.VirtualPin(1);
+devices.garage.pins.openState = v1;
+devices.garage.onMessage = function(data, socket) {
+  var message = data.split(':');
+  if (message[0] == 'openState') {
+    devices.garage.pins.openState.write(parseInt(message[1])*255);
+  }
+};
