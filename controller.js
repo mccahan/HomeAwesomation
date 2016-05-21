@@ -67,7 +67,7 @@ v2.on('write', function(param) {
   if (param[0] == 1) {
     message = 'ZONE0ON';
   } else {
-    message = 'ZONE1ON';
+    message = 'ZONE0OFF';
   }
   client.on('data', function(data){
     client.destroy();
