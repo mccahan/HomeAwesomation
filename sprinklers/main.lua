@@ -24,53 +24,20 @@ gpio.mode(3, gpio.OUTPUT, gpio.PULLUP);
 srv = net.createServer(net.TCP)
 srv:listen(80, function(conn)
   conn:on("receive", function(conn, payload)
-    if payload == 'ZONE0ON' then
-      print "Zone 0 ON"
-      conn:send("OK")
-      conn:close()
-      gpio.write(0, gpio.LOW);
+    if string.sub(payload, 0, 4) == 'ZONE' then
+      zone = tonumber(string.sub(payload, 5, 5))
+      if string.sub(payload, 6, 7) == 'OF' then
+         print("Turning zone " .. zone .. " off")
+         state = gpio.HIGH;
+       else
+         print("Turning zone " .. zone .. " on")
+         state = gpio.LOW;
+       end
+
+       gpio.write(zone, state);
+       conn:send("OK")
+       conn:close()
     end
-    if payload == 'ZONE0OFF' then
-      print "Zone 0 ON"
-      conn:send("OK")
-      conn:close()
-      gpio.write(0, gpio.HIGH);
-    end
-    if payload == 'ZONE1ON' then
-      print "Zone 1 ON"
-      conn:send("OK")
-      conn:close()
-      gpio.write(1, gpio.LOW);
-    end
-    if payload == 'ZONE1OFF' then
-      print "Zone 1 ON"
-      conn:send("OK")
-      conn:close()
-      gpio.write(1, gpio.HIGH);
-    end
-    if payload == 'ZONE2ON' then
-      print "Zone 2 ON"
-      conn:send("OK")
-      conn:close()
-      gpio.write(2, gpio.LOW);
-    end
-    if payload == 'ZONE3OFF' then
-      print "Zone 3 ON"
-      conn:send("OK")
-      conn:close()
-      gpio.write(3, gpio.HIGH);
-    end
-    if payload == 'ZONE4ON' then
-      print "Zone 4 ON"
-      conn:send("OK")
-      conn:close()
-      gpio.write(4, gpio.LOW);
-    end
-    if payload == 'ZONE4OFF' then
-      print "Zone 4 ON"
-      conn:send("OK")
-      conn:close()
-      gpio.write(4, gpio.HIGH);
-    end
+
   end)
 end)
