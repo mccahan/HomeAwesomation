@@ -60,20 +60,29 @@ devices.garage.onMessage = function(data, socket) {
 };
 
 // Sprinklers
+var zoneHandler = function(zone) {
+  return function(param) {
+    var message;
+    var client = new net.Socket();
+    if (param[0] == 1) {
+      message = 'ZONE' + zone + 'ON';
+    } else {
+      message = 'ZONE' + zone + 'OFF';
+    }
+    client.on('data', function(data){
+      client.destroy();
+      console.log("Triggered sprinklers " + message);
+    });
+    client.connect(80, devices.sprinklers.address, function() {
+      client.write(message);
+    });
+  };
+};
 var v2 = new blynk.VirtualPin(2);
-v2.on('write', function(param) {
-  var message;
-  var client = new net.Socket();
-  if (param[0] == 1) {
-    message = 'ZONE0ON';
-  } else {
-    message = 'ZONE0OFF';
-  }
-  client.on('data', function(data){
-    client.destroy();
-    console.log("Triggered sprinklers " + message);
-  });
-  client.connect(80, devices.sprinklers.address, function() {
-    client.write(message);
-  });
-})
+v2.on('write', zoneHandler(0));
+var v3 = new blynk.VirtualPin(2);
+v3.on('write', zoneHandler(1));
+var v4 = new blynk.VirtualPin(2);
+v4.on('write', zoneHandler(2));
+var v5 = new blynk.VirtualPin(2);
+v5.on('write', zoneHandler(3));
