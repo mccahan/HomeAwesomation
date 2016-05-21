@@ -80,9 +80,9 @@ var zoneHandler = function(zone) {
 };
 var v2 = new blynk.VirtualPin(2);
 v2.on('write', zoneHandler(0));
-var v3 = new blynk.VirtualPin(2);
+var v3 = new blynk.VirtualPin(3);
 v3.on('write', zoneHandler(1));
-var v4 = new blynk.VirtualPin(2);
+var v4 = new blynk.VirtualPin(4);
 v4.on('write', zoneHandler(2));
-var v5 = new blynk.VirtualPin(2);
+var v5 = new blynk.VirtualPin(5);
 v5.on('write', zoneHandler(3));
