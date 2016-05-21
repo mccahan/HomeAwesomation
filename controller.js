@@ -6,6 +6,7 @@ var blynk = new Blynk.Blynk('4905434f280341a7ac1a3818060f6704', options = { conn
 
 var devices = {};
 devices.garage = { address: null, last: null, pins: { 'openState': null }};
+devices.sprinklers = { address: null, last: null };
 
 // Listening Server
 var registrationString = /DEVICE: (.*) - (.*)/;
@@ -57,3 +58,21 @@ devices.garage.onMessage = function(data, socket) {
     devices.garage.pins.openState.write(parseInt(message[1])*255);
   }
 };
+
+// Sprinklers
+var v2 = new blynk.VirtualPin(2);
+v2.on('write', function(param) {
+  var message;
+  if (param[0] == 1) {
+    message = 'ZONE0ON';
+  } else {
+    message = 'ZONE1ON';
+  }
+  client.on('data', function(data){
+    client.destroy();
+    console.log("Triggered sprinklers " + message);
+  });
+  client.connect(80, devices.sprinklers.address, function() {
+    client.write(message);
+  });
+})
