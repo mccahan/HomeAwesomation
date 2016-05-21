@@ -63,6 +63,7 @@ devices.garage.onMessage = function(data, socket) {
 var v2 = new blynk.VirtualPin(2);
 v2.on('write', function(param) {
   var message;
+  var client = new net.Socket();
   if (param[0] == 1) {
     message = 'ZONE0ON';
   } else {
