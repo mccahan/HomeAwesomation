@@ -1,5 +1,7 @@
 #!/usr/local/bin/node
 
+require('console-stamp')(console, '[HH:MM:ss.l]');
+
 var net = require('net');
 var Blynk = require('blynk-library');
 var blynk = new Blynk.Blynk('4905434f280341a7ac1a3818060f6704', options = { connector: new Blynk.TcpClient( { addr: 'localhost'} ) });
@@ -86,3 +88,58 @@ var v4 = new blynk.VirtualPin(4);
 v4.on('write', zoneHandler(2));
 var v5 = new blynk.VirtualPin(5);
 v5.on('write', zoneHandler(3));
+
+var sendSprinklerMessage = function(message) {
+  console.log("Send sprinkler message " + message);
+  var client = new net.Socket();
+  client.on('data', function(data){
+    client.destroy();
+  });
+  client.connect(80, devices.sprinklers.address, function() {
+    client.write(message);
+  });
+};
+var runSprinklerCycle = function(zone, duration) {
+  var message;
+  sendSprinklerMessage('ZONE' + zone + 'ON');
+  setTimeout(function(){
+    sendSprinklerMessage('ZONE' + zone + 'OFF');
+  }, duration*1000);
+};
+
+var v6 = new blynk.VirtualPin(6);
+v6.on('write', function(param) {
+  if (param[0] == '1') {
+    console.log("Starting sprinker cycle");
+    runSprinklerCycle(0, 3*60);
+    var offset = 3*60+10;
+    setTimeout(function(){
+      runSprinklerCycle(1, 3*60);
+    }, offset*1000);
+    offset += 3*60+10;
+    setTimeout(function(){
+      runSprinklerCycle(2, 3*60);
+    }, offset*1000);
+    offset += 3*60+10;
+    setTimeout(function(){
+      runSprinklerCycle(3, 3*60);
+    }, offset*1000);
+
+    offset += 20*60;
+    setTimeout(function(){
+      runSprinklerCycle(0, 3*60);
+    }, offset*1000);
+    offset += 3*60+10;
+    setTimeout(function(){
+      runSprinklerCycle(1, 3*60);
+    }, offset*1000);
+    offset += 3*60+10;
+    setTimeout(function(){
+      runSprinklerCycle(2, 3*60);
+    }, offset*1000);
+    offset += 3*60+10;
+    setTimeout(function(){
+      runSprinklerCycle(3, 3*60);
+    }, offset*1000);
+  }
+});
