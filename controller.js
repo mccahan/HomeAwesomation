@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/local/bin/node
 
 var net = require('net');
 var Blynk = require('blynk-library');

@@ -34,7 +34,12 @@ function registerOpenState()
   client = net.createConnection(net.TCP, false)
   client:connect(5000, "10.0.1.19")
   client:on("connection", function()
-    client:send("MESSAGE: garage - openState:" .. gpio.read(8) .. "\n")
+    if gpio.read(8) == 0 then
+      state = 1
+    else
+      state = 0
+    end
+    client:send("MESSAGE: garage - openState:" .. state .. "\n")
     print "Sent open state"
     client:close()
   end)
