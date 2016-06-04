@@ -53,3 +53,8 @@ tmr.alarm(2, 500, 1, function()
     registerOpenState()
   end
 end)
+
+tmr.alarm(3, 10000, 1, function()
+  openstate = gpio.read(8)
+  registerOpenState()
+end)
