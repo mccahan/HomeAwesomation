@@ -20,12 +20,22 @@ srv:listen(80, function(conn)
   conn:on("receive", function(conn, payload)
     if payload == 'DOOR' then
       print "Opening door"
-      conn:send("OK")
+      conn:send('{"status":"success"}')
       conn:close()
       gpio.write(7, gpio.LOW);
       tmr.alarm(0, 300, 0, function()
         gpio.write(7, gpio.HIGH);
       end)
+    end
+
+    if payload == 'DOOR_STATE' then
+      print "Pin status requested"
+      if gpio.read(8) == 0 then
+        conn:send('{"status":"success","open":true}');
+      else
+        conn:send('{"status":"success","open":false}');
+      end
+      conn:close()
     end
   end)
 end)
@@ -47,14 +57,9 @@ end
 openstate = gpio.read(8);
 registerOpenState()
 
-tmr.alarm(2, 500, 1, function()
+tmr.alarm(2, 1000, 1, function()
   if gpio.read(8) ~= openstate then
     openstate = gpio.read(8)
     registerOpenState()
   end
-end)
-
-tmr.alarm(3, 10000, 1, function()
-  openstate = gpio.read(8)
-  registerOpenState()
 end)
