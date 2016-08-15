@@ -1,0 +1,19 @@
+{
+  "name": "homebridge-homeawesomation-garage",
+  "version": "1.0.0",
+  "description": "Homebridge Garage Plugin",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "keywords": [
+    "homebridge-plugin",
+    "homebridge",
+    "garagedoor"
+  ],
+  "engines": {  
+    "homebridge": ">=0.2.0"
+  }
+}
