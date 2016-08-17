@@ -104,13 +104,15 @@ v5.on('write', zoneHandler(3));
 
 var sendSprinklerMessage = function(message) {
   console.log("Send sprinkler message " + message);
-  /*var client = new net.Socket();
+  var client = new net.Socket();
   client.on('data', function(data){
     client.destroy();
+  }).on('error', function(err){
+    console.log("Error occurred sending sprinkler message: ", e);
   });
   client.connect(80, devices.sprinklers.address, function() {
     client.write(message);
-  });*/
+  });
 };
 var runSprinklerCycle = function(zone, duration) {
   var message;
