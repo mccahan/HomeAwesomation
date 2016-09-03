@@ -108,7 +108,10 @@ var sendSprinklerMessage = function(message) {
   client.on('data', function(data){
     client.destroy();
   }).on('error', function(err){
-    console.log("Error occurred sending sprinkler message: ", e);
+    console.log("Error occurred sending sprinkler message: ", err);
+    setTimeout(function(){
+      sendSprinklerMessage(message);
+    }, 100);
   });
   client.connect(80, devices.sprinklers.address, function() {
     client.write(message);
