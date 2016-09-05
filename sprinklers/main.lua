@@ -32,6 +32,15 @@ srv:listen(80, function(conn)
        else
          print("Turning zone " .. zone .. " on")
          state = gpio.LOW;
+
+         -- Automatically shut off after ten minutes if we don't receive a signal
+         tmr.alarm(5, 600000, tmr.ALARM_SINGLE, function()
+            print("Auto Shutoff")
+            gpio.write(0, gpio.HIGH);
+            gpio.write(1, gpio.HIGH);
+            gpio.write(2, gpio.HIGH);
+            gpio.write(3, gpio.HIGH);
+         end)
        end
 
        gpio.write(zone, state);
