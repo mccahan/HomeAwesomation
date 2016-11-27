@@ -9,7 +9,7 @@ var Blynk = require('blynk-library');
 var blynk = new Blynk.Blynk(apiKey, options = { connector: new Blynk.TcpClient( { addr: 'localhost'} ) });
 
 var devices = {};
-devices.garage = { address: null, last: null, pins: { 'openState': null }};
+devices.garage = { address: '10.0.1.4', last: null, pins: { 'openState': null }};
 devices.sprinklers = { address: null, last: null };
 
 // Read pin function
