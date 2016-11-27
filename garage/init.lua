@@ -1,3 +1,4 @@
+tmr.softwd(30)
 wifi.setmode(wifi.STATION)
 wifi.sta.config("Pretty Good WiFi","helloworld12")
 
@@ -10,7 +11,6 @@ tmr.alarm(0,500,1,function()
 
       -- Did not get an IP in time, so quitting
       tmr.stop(0)
-      gpio.write(pin_error,1)
       print "Not connected to wifi."
     end
   else
