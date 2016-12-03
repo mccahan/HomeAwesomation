@@ -45,6 +45,8 @@ HomeAwesomationGarageDoor.prototype = {
       Buffer.concat(body).toString();
       var result = JSON.parse(body);
       callback(result.open);
+    }).on('error', function(err){
+      console.log("Encountered error while checking door state", err);
     });
     client.connect(80, '10.0.1.4', function() {
       client.write('DOOR_STATE');
@@ -116,6 +118,8 @@ HomeAwesomationGarageDoor.prototype = {
           client.on('data', function(data){
             client.destroy();
             console.log("Triggered garage door");
+          }).on('error', function(err) {
+            console.log("Error triggering garage door", err);
           });
           client.connect(80, '10.0.1.4', function() {
             client.write('DOOR');
