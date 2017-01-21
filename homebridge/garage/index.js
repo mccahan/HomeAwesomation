@@ -109,9 +109,9 @@ HomeAwesomationGarageDoor.prototype = {
           door.log("Triggering GarageDoor Relay");
           door.operating = true;
           if (state == DoorState.OPEN) {
-              door.currentDoorState.setValue(DoorState.OPENING);
+              door.currentDoorState.setValue(DoorState.OPEN);
           } else {
-              door.currentDoorState.setValue(DoorState.CLOSING);
+              door.currentDoorState.setValue(DoorState.CLOSED);
           }
           /* TRIGGER */
           var client = new net.Socket();
